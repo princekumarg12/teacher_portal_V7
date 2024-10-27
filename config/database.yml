@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: teacher_portal_v7_development
+  username: prince
+  password: password
+
+test:
+  <<: *default
+  database: teacher_portal_v7_test
+
+
+production:
+  <<: *default
+  database: teacher_portal_v7_production
+  url: <%= ENV["DATABASE_URL"] %>

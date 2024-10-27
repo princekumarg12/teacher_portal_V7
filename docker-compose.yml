@@ -1,0 +1,38 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bundle exec rails server -b 0.0.0.0 -p 3000
+    volumes:
+      - .:/rails  # Mounts the app's directory to the container for live updates
+      - gems:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://postgres:password@db:5432/teacher_portal_v7_production
+      RAILS_MASTER_KEY: a966a7c556fcd798191db9049d85b735
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: teacher_portal_v7_production
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Mount custom Nginx config file
+    ports:
+      - "80:80"  # Expose Nginx on port 80 for external access
+    depends_on:
+      - app
+volumes:
+  db-data:
+  gems:
